@@ -2,6 +2,7 @@ package com.josuesch.paintdotnetintegration
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.ui.TextBrowseFolderListener
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.util.ui.FormBuilder
 import java.awt.FlowLayout
@@ -17,12 +18,10 @@ class PaintNetSettingsConfigurable : Configurable {
 
     override fun createComponent(): JComponent? {
         pathField = TextFieldWithBrowseButton()
-        pathField?.addBrowseFolderListener(
-            "Select Paint.NET Executable",
-            "Choose the PaintDotNet.exe file",
-            null,
-            FileChooserDescriptorFactory.createSingleFileDescriptor()
-        )
+        val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("exe")
+            .withTitle("Select Paint.NET Executable")
+            .withDescription("Choose the PaintDotNet.exe file")
+        pathField?.addBrowseFolderListener(TextBrowseFolderListener(descriptor))
 
         val autoDetectBtn = JButton("Auto-detect")
         autoDetectBtn.addActionListener {

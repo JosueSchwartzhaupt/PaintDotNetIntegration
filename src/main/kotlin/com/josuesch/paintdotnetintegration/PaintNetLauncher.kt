@@ -17,9 +17,9 @@ object PaintNetLauncher {
         ProcessBuilder(command).start()
     }
 
-    fun launchEmpty() {
+    fun openFileDirectly(file: File) {
         val exePath = resolveExePath()
-        ProcessBuilder(exePath).start()
+        ProcessBuilder(exePath, file.absolutePath).start()
     }
 
     private fun resolveExePath(): String {
