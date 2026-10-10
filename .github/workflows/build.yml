@@ -15,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'zulu'
@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew buildPlugin
 
       - name: Upload Plugin ZIP Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: PaintDotNetIntegration-Plugin
           path: build/distributions/*.zip
@@ -48,17 +48,12 @@ jobs:
 
     steps:
       - name: Download Built Plugin Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: PaintDotNetIntegration-Plugin
           path: plugin-dist
 
       - name: Upload Zip to Release
-        uses: secrets/GITHUB_TOKEN && actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./plugin-dist/*.zip
-          asset_name: PaintDotNetIntegration.zip
-          asset_content_type: application/zip
+          files: plugin-dist/*.zip
