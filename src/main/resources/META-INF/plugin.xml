@@ -14,6 +14,13 @@
 
     <depends>com.intellij.modules.platform</depends>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable parentId="tools"
+                                 instance="com.josuesch.paintdotnetintegration.PaintNetSettingsConfigurable"
+                                 id="com.josuesch.paintdotnetintegration.PaintNetSettingsConfigurable"
+                                 displayName="Paint.NET Integration"/>
+    </extensions>
+
     <actions>
 
         <action
@@ -22,10 +29,18 @@
                 text="Edit in Paint.NET"
                 description="Open the selected image in Paint.NET">
 
-            <add-to-group
-                    group-id="ProjectViewPopupMenu"
-                    anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift P"/>
+        </action>
 
+        <action
+                id="com.josuesch.paintdotnetintegration.CreateImageInPaintNetAction"
+                class="com.josuesch.paintdotnetintegration.CreateImageInPaintNetAction"
+                text="Create Image in Paint.NET"
+                description="Open Paint.NET with a blank canvas">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="NewGroup" anchor="last"/>
         </action>
 
     </actions>

@@ -4,17 +4,39 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 object PaintNetLauncher {
-    // Adjust this path if Paint.NET is installed elsewhere
-    private const val PAINT_NET_EXE = "C:\\Program Files\\paint.net\\PaintDotNet.exe"
 
     fun open(file: VirtualFile) {
-        val exe = File(PAINT_NET_EXE)
-        if (!exe.isFile) {
-            throw IllegalStateException("Paint.NET executable not found at $PAINT_NET_EXE")
+        openAll(listOf(file))
+    }
+
+    fun openAll(files: List<VirtualFile>) {
+        if (files.isEmpty()) return
+        val exePath = resolveExePath()
+        val command = mutableListOf(exePath)
+        command.addAll(files.map { it.path.replace("/", "\\") })
+        ProcessBuilder(command).start()
+    }
+
+    fun launchEmpty() {
+        val exePath = resolveExePath()
+        ProcessBuilder(exePath).start()
+    }
+
+    private fun resolveExePath(): String {
+        val settings = PaintNetSettings.getInstance()
+        var exePath = settings.state.paintNetPath
+
+        if (exePath.isEmpty() || !File(exePath).exists()) {
+            val detectedPath = PaintNetDetector.detect()
+            if (detectedPath != null) {
+                exePath = detectedPath
+                settings.state.paintNetPath = detectedPath
+            } else {
+                throw IllegalStateException(
+                    "Paint.NET executable not found. Please configure the path in Settings \u2192 Tools \u2192 Paint.NET Integration."
+                )
+            }
         }
-        // Use ProcessBuilder with separate arguments to avoid quoting issues
-        ProcessBuilder(exe.absolutePath, file.path)
-            .redirectErrorStream(true)
-            .start()
+        return exePath
     }
 }

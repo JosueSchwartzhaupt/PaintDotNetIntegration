@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.ui.Messages
 
 class EditInPaintNetAction : AnAction(), DumbAware {
 
@@ -14,16 +15,28 @@ class EditInPaintNetAction : AnAction(), DumbAware {
     }
 
     override fun update(event: AnActionEvent) {
-        val file = event.getData(CommonDataKeys.VIRTUAL_FILE)
-        val isImg = file?.let { isImage(it) } == true
-        event.presentation.isVisible = isImg
-        event.presentation.isEnabled = isImg
+        val files = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
+        val hasImage = files?.any { isImage(it) } == true
+        event.presentation.isVisible = hasImage
+        event.presentation.isEnabled = hasImage
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        val file = event.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
+        val files = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
+        val imageFiles = files.filter { isImage(it) }
+        if (imageFiles.isEmpty()) return
+
         FileDocumentManager.getInstance().saveAllDocuments()
-        PaintNetLauncher.open(file)
+
+        try {
+            PaintNetLauncher.openAll(imageFiles)
+        } catch (e: Exception) {
+            Messages.showErrorDialog(
+                event.project,
+                e.message ?: "Failed to open Paint.NET",
+                "Paint.NET Integration Error"
+            )
+        }
     }
 
     private fun isImage(file: com.intellij.openapi.vfs.VirtualFile): Boolean {
