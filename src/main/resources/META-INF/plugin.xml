@@ -1,0 +1,33 @@
+<idea-plugin>
+
+    <id>com.josuesch.PaintDotNetIntegration</id>
+
+    <name>PaintDotNetIntegration</name>
+
+    <vendor email="your@email.com" url="https://github.com/...">
+        Josué Schwartzhaupt
+    </vendor>
+
+    <description>
+        Integration between IntelliJ IDEA and Paint.NET.
+    </description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <actions>
+
+        <action
+                id="com.josuesch.paintdotnetintegration.EditInPaintNetAction"
+                class="com.josuesch.paintdotnetintegration.EditInPaintNetAction"
+                text="Edit in Paint.NET"
+                description="Open the selected image in Paint.NET">
+
+            <add-to-group
+                    group-id="ProjectViewPopupMenu"
+                    anchor="last"/>
+
+        </action>
+
+    </actions>
+
+</idea-plugin>
